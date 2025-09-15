@@ -10,7 +10,7 @@
 # Contributors:
 #   Red Hat, Inc. - initial API and implementation
 #
-
+set -x
 set -e
 
 OPERATOR_REPO=$(dirname "$(dirname "$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")")")
@@ -103,7 +103,7 @@ buildBundleFromSources() {
   mv ${BUNDLE_DIR}/bundle.Dockerfile ${BUNDLE_DIR}/Dockerfile
 
   # Set operator image from the registry
-  yq -rYi '.spec.install.spec.deployments[0].spec.template.spec.containers[0].image = "'${OPERATOR_IMAGE}'"' ${BUNDLE_DIR}/manifests/che-operator.clusterserviceversion.yaml
+  yq e -i '.spec.install.spec.deployments[0].spec.template.spec.containers[0].image = "'${OPERATOR_IMAGE}'"' ${BUNDLE_DIR}/manifests/che-operator.clusterserviceversion.yaml
 
   oc delete buildconfigs ${REGISTRY_BUNDLE_IMAGE_NAME} --ignore-not-found=true -n "${NAMESPACE}"
   oc delete imagestreamtag ${REGISTRY_BUNDLE_IMAGE_NAME}:latest --ignore-not-found=true -n "${NAMESPACE}"
